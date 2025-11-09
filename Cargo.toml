@@ -1,0 +1,10 @@
+[workspace]
+members = ["2015", "utils"]
+resolver = "3"
+
+[workspace.dependencies]
+criterion = "0.7.0"
+
+[profile.bench]
+lto = "fat"
+codegen-units = 1
