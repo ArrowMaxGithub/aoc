@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 aoc-utils = { path = "../utils/" }
 aoc-macros = { path = "../macros" }
+rand = { workspace = true }
 ahash = { workspace = true }
 
 [dev-dependencies]

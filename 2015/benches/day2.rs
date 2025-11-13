@@ -7,6 +7,7 @@ fn bench_part1(c: &mut Criterion) {
     let mut group = c.benchmark_group(BENCH_GROUPS[0]);
     group.bench_function("baseline", |b| b.iter(|| part1_baseline(black_box(INPUT))));
     group.bench_function("optimize", |b| b.iter(|| part1(black_box(INPUT))));
+    group.bench_function("lut", |b| b.iter(|| part1_lut(black_box(INPUT))));
     group.finish();
 }
 

@@ -3,9 +3,23 @@ pub const INPUT: &str = include_str!("../../input/2015/day2.txt");
 pub const ANSWER_1: u32 = 1586300;
 pub const ANSWER_2: u32 = 3737498;
 
+static LUT: [u32; 16777216 / 4] = unsafe {
+    std::mem::transmute(*include_bytes!(concat!(
+        env!("OUT_DIR"),
+        "/LUT_2015d2p1.bin"
+    )))
+};
+
+const MAGIC: u64 = 8318619103235151522;
+const MAGIC_BITS: usize = 22;
+const MAGIC_SHIFT: usize = 64 - MAGIC_BITS;
+
+const MAGIC_SIMD: Simd<u64, 8> = Simd::splat(MAGIC);
+const MAGIC_SHIFT_SIMD: Simd<u64, 8> = Simd::splat(MAGIC_SHIFT as u64);
+
 use std::{
     hint::unreachable_unchecked,
-    simd::{Simd, cmp::SimdOrd, num::SimdUint},
+    simd::{Simd, cmp::SimdOrd, num::SimdUint, ptr::SimdConstPtr},
 };
 
 pub fn part1_baseline(input: &str) -> u32 {
@@ -79,6 +93,29 @@ pub fn part1(input: &str) -> u32 {
     }
 
     result.reduce_sum()
+}
+
+pub fn part1_lut(input: &str) -> u32 {
+    let chunks = input.as_bytes().split(|b| b == &b'\n').array_chunks::<8>();
+    chunks.fold(0, |acc, chunk| {
+        let mut bytes = [0_u64; 8];
+        let mut dst = bytes.as_mut_ptr();
+        for line in chunk {
+            let src = line.as_ptr();
+            unsafe {
+                std::ptr::copy_nonoverlapping(src, dst as *mut u8, line.len());
+            }
+            dst = unsafe { dst.add(1) };
+        }
+        let simd: Simd<u64, 8> = Simd::from_array(bytes);
+        let hash: Simd<u64, 8> = (simd * MAGIC_SIMD) >> MAGIC_SHIFT_SIMD;
+
+        let start: Simd<*const u32, 8> = Simd::splat(LUT.as_ptr());
+        let offset: Simd<*const u32, 8> = start.wrapping_add(hash.cast());
+
+        let results: Simd<u32, 8> = unsafe { Simd::gather_ptr(offset.cast()) };
+        acc + results.reduce_sum()
+    })
 }
 
 pub fn part2_baseline(input: &str) -> u32 {
