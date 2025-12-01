@@ -1,5 +1,5 @@
 [workspace]
-members = ["2015", "utils", "macros"]
+members = ["2015", "2025", "utils", "macros"]
 resolver = "3"
 
 [workspace.dependencies]

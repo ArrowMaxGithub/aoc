@@ -48,6 +48,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoc-2025"
+version = "0.1.0"
+dependencies = [
+ "ahash",
+ "aoc-macros",
+ "aoc-utils",
+ "criterion",
+ "rand",
+]
+
+[[package]]
 name = "aoc-macros"
 version = "0.1.0"
 dependencies = [

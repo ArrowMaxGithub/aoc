@@ -1,0 +1,19 @@
+[package]
+name = "aoc-2025"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aoc-utils = { path = "../utils/" }
+aoc-macros = { path = "../macros" }
+rand = { workspace = true }
+ahash = { workspace = true }
+
+[dev-dependencies]
+criterion = { workspace = true }
+
+[build-dependencies]
+
+[[bench]]
+name = "day1"
+harness = false
